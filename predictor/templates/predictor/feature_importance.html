@@ -2,115 +2,48 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <title>Важливість факторів</title>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f3f6fb;
-            color: #12345a;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 30px auto;
-            padding: 30px;
-            background: white;
-            border-radius: 12px;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 25px;
-        }
-
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-            text-align: center;
-        }
-
-        th {
-            background: #2864aa;
-            color: white;
-        }
-
-        .positive {
-            color: green;
-        }
-
-        .negative {
-            color: red;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 12px 20px;
-            background: #2864aa;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            margin-top: 25px;
-        }
-    </style>
+    
+    <link rel="stylesheet" href="{% static 'predictor/css/style.css' %}">
 </head>
 
-<body>
+<body class="importance-page">
 <div class="container">
 
-    <h1>Важливість факторів кредитування</h1>
+    <h1>Важливість факторів, що впливають на рішення про отримання кредиту</h1>
 
     <p>
-        Коефіцієнти моделі Logistic Regression,
-        відсортовані за абсолютним значенням.
+        Середні абсолютні значення коефіцієнтів
+        моделі Logistic Regression.
     </p>
 
     <table>
         <thead>
-        <tr>
-            <th>№</th>
-            <th>Фактор</th>
-            <th>Коефіцієнт</th>
-            <th>Абсолютне значення</th>
-        </tr>
+            <tr>
+                <th>№</th>
+                <th>Фактор</th>
+                <th>Середнє абсолютне значення</th>
+            </tr>
         </thead>
 
         <tbody>
-        {% for feature in features %}
-        <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ feature.name }}</td>
-
-            <td>
-                {% if feature.coefficient > 0 %}
-                    <span class="positive">
-                        {{ feature.coefficient }}
-                    </span>
-                {% else %}
-                    <span class="negative">
-                        {{ feature.coefficient }}
-                    </span>
-                {% endif %}
-            </td>
-
-            <td>{{ feature.importance }}</td>
-        </tr>
-        {% endfor %}
+            {% for factor in importance %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ factor.name }}</td>
+                <td>{{ factor.value|floatformat:6 }}</td>
+            </tr>
+            {% endfor %}
         </tbody>
     </table>
 
     <p>
-        Додатний коефіцієнт підвищує прогнозовані
-        шанси схвалення кредиту, від'ємний — знижує.
-        Абсолютні коефіцієнти не завжди можна
-        безпосередньо порівнювати між різними
-        типами ознак.
+        Показник обчислюється як середнє абсолютне
+        значення коефіцієнтів, що належать одному фактору.
+        Він не є відсотком впливу на рішення про кредит.
     </p>
 
     <a href="{% url 'history' %}" class="button">

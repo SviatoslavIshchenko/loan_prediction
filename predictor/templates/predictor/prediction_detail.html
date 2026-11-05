@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Деталі прогнозу</title>
+    
+    <link rel="stylesheet" href="{% static 'predictor/css/style.css' %}">
+</head>
+<body class="detail-page">
+<div class="container">
+
+    <h1>Деталі прогнозу №{{ prediction.id }}</h1>
+
+    <p>
+        Дата:
+        {{ prediction.created_at|date:"d.m.Y H:i" }}
+    </p>
+
+    <table>
+        <tr>
+            <td>Стать</td>
+            <td>
+                {% if prediction.gender == "Male" %}
+                    Чоловіча
+                {% else %}
+                    Жіноча
+                {% endif %}
+            </td>
+        </tr>
+
+        <tr>
+            <td>Сімейний стан</td>
+            <td>
+                {% if prediction.married == "Yes" %}
+                    Одружений / заміжня
+                {% else %}
+                    Неодружений / незаміжня
+                {% endif %}
+            </td>
+        </tr>
+
+        <tr>
+            <td>Кількість утриманців</td>
+            <td>{{ prediction.dependents }}</td>
+        </tr>
+
+        <tr>
+            <td>Освіта</td>
+            <td>
+                {% if prediction.education == "Graduate" %}
+                    Вища освіта
+                {% else %}
+                    Без вищої освіти
+                {% endif %}
+            </td>
+        </tr>
+
+        <tr>
+            <td>Самозайнятість</td>
+            <td>
+                {% if prediction.self_employed == "Yes" %}
+                    Так
+                {% else %}
+                    Ні
+                {% endif %}
+            </td>
+        </tr>
+
+        <tr>
+            <td>Дохід заявника</td>
+            <td>{{ prediction.applicant_income|floatformat:2 }}</td>
+        </tr>
+
+        <tr>
+            <td>Дохід співзаявника</td>
+            <td>{{ prediction.coapplicant_income|floatformat:2 }}</td>
+        </tr>
+
+        <tr>
+            <td>Сума кредиту</td>
+            <td>{{ prediction.loan_amount|floatformat:2 }}</td>
+        </tr>
+
+        <tr>
+            <td>Термін кредитування</td>
+            <td>{{ prediction.loan_amount_term }} міс.</td>
+        </tr>
+
+        <tr>
+            <td>Кредитна історія</td>
+            <td>
+                {% if prediction.credit_history == 1 %}
+                    Позитивна
+                {% else %}
+                    Негативна
+                {% endif %}
+            </td>
+        </tr>
+
+        <tr>
+            <td>Тип місцевості</td>
+            <td>
+                {% if prediction.property_area == "Urban" %}
+                    Місто
+                {% elif prediction.property_area == "Semiurban" %}
+                    Передмістя
+                {% else %}
+                    Сільська місцевість
+                {% endif %}
+            </td>
+        </tr>
+
+        <tr>
+            <td>Співвідношення кредиту до доходу</td>
+            <td>
+                {{ prediction.loan_income_ratio|default_if_none:"—" }}
+            </td>
+        </tr>
+
+        <tr>
+            <td>Ймовірність схвалення</td>
+            <td>{{ prediction.probability_percent }}%</td>
+        </tr>
+
+        <tr>
+            <td>Результат</td>
+            <td>
+                {% if prediction.prediction == 1 %}
+                    Схвалено
+                {% else %}
+                    Відхилено
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+
+    <a href="{% url 'history' %}" class="button">
+        Повернутися до історії прогнозів
+    </a>
+
+</div>
+</body>
+</html>

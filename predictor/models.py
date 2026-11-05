@@ -26,6 +26,21 @@ class LoanPrediction(models.Model):
     # Дата та час створення прогнозу
     created_at = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def loan_income_ratio(self):
+        total_income = (
+                self.applicant_income + self.coapplicant_income
+        )
+
+        if total_income > 0:
+            return round(self.loan_amount / total_income, 4)
+
+        return None
+
+    @property
+    def probability_percent(self):
+        return round(self.probability * 100, 2)
+
     def __str__(self):
         return f"Заявка №{self.id}"
 
