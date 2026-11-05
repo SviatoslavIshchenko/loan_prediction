@@ -1,3 +1,31 @@
 from django.db import models
 
-# Create your models here.
+class LoanPrediction(models.Model):
+
+    # Характеристики позичальника
+    gender = models.CharField(max_length=10)
+    married = models.CharField(max_length=5)
+    dependents = models.CharField(max_length=5)
+    education = models.CharField(max_length=20)
+    self_employed = models.CharField(max_length=5)
+
+    # Фінансові характеристики
+    applicant_income = models.FloatField()
+    coapplicant_income = models.FloatField()
+    loan_amount = models.FloatField()
+    loan_amount_term = models.IntegerField()
+
+    # Кредитна історія та місцевість
+    credit_history = models.IntegerField()
+    property_area = models.CharField(max_length=20)
+
+    # Результати прогнозування
+    probability = models.FloatField()
+    prediction = models.IntegerField()
+
+    # Дата та час створення прогнозу
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Заявка №{self.id}"
+

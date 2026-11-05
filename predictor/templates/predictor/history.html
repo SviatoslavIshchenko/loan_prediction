@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Історія прогнозів кредитування</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f6fb;
+            margin: 0;
+            padding: 30px;
+            color: #1d3557;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #123b70;
+        }
+
+        .description {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            background-color: #eef4fb;
+            border-radius: 10px;
+        }
+
+        .stat-card h2 {
+            font-size: 30px;
+            margin: 10px 0;
+        }
+
+        .approved {
+            color: #087443;
+        }
+
+        .rejected {
+            color: #b42318;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #2463ac;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 25px;
+            background-color: #2463ac;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+        }
+
+        .button:hover {
+            background-color: #174b87;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Історія прогнозів кредитування</h1>
+
+    <p class="description">
+        Перегляд результатів прогнозування схвалення кредитних заявок
+        на основі моделі Logistic Regression
+    </p>
+
+    <!-- Статистика прогнозів -->
+
+    <div class="stats">
+
+        <div class="stat-card">
+            <h3>Усього прогнозів</h3>
+            <h2>{{ total }}</h2>
+        </div>
+
+        <div class="stat-card">
+            <h3>Прогнозовано схвалено</h3>
+            <h2 class="approved">{{ approved }}</h2>
+        </div>
+
+        <div class="stat-card">
+            <h3>Прогнозовано відхилено</h3>
+            <h2 class="rejected">{{ rejected }}</h2>
+        </div>
+
+    </div>
+
+    <!-- Таблиця прогнозів -->
+
+    <h2>Збережені прогнози</h2>
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Дата</th>
+                    <th>Дохід заявника</th>
+                    <th>Дохід співзаявника</th>
+                    <th>Сума кредиту</th>
+                    <th>Кредитна історія</th>
+                    <th>Ймовірність</th>
+                    <th>Результат</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for item in predictions %}
+
+                <tr>
+                    <td>{{ item.id }}</td>
+
+                    <td>
+                        {{ item.created_at|date:"d.m.Y H:i" }}
+                    </td>
+
+                    <td>{{ item.applicant_income|floatformat:2 }}</td>
+
+                    <td>{{ item.coapplicant_income|floatformat:2 }}</td>
+
+                    <td>{{ item.loan_amount|floatformat:2 }}</td>
+
+                    <td>
+                        {% if item.credit_history == 1 %}
+                            Позитивна
+                        {% else %}
+                            Негативна
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% widthratio item.probability 1 100 %}%
+                    </td>
+
+                    <td>
+                        {% if item.prediction == 1 %}
+                            <span class="approved">Схвалено</span>
+                        {% else %}
+                            <span class="rejected">Відхилено</span>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="8" class="empty">
+                        Історія прогнозів поки порожня.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <a href="{% url 'predict' %}" class="button">
+        Повернутися до прогнозування
+    </a>
+
+    <a href="{% url 'feature_importance' %}" class="button">
+        Переглянути важливість факторів
+    </a>
+
+</div>
+
+</body>
+</html>
